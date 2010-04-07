@@ -1,40 +1,45 @@
 fs: require 'fs'
+path: require 'path'
 sys: require "sys"
 debug: sys.debug
 puts: sys.puts
-term: require "../lib/term"
 assert: require "assert"
 
 helpers: {
-	# (blatantly stolen from coffeescript-proper)
-	# Merge objects, returning a fresh copy with attributes from both sides.
-	# Used every time `BaseNode#compile` is called, to allow properties in the
-	# options hash to propagate down the tree without polluting other branches.
-	merge: ((options, overrides) ->
-		fresh: {}
-		(fresh[key]: val) for key, val of options
-		(fresh[key]: val) for key, val of overrides if overrides
-		fresh),
+  # (blatantly stolen from coffeescript-proper)
+  # Merge objects, returning a fresh copy with attributes from both sides.
+  # Used every time `BaseNode#compile` is called, to allow properties in the
+  # options hash to propagate down the tree without polluting other branches.
+  merge: ((options, overrides) ->
+    fresh: {}
+    (fresh[key]: val) for key, val of options
+    (fresh[key]: val) for key, val of overrides if overrides
+    fresh),
 
-	# Extend a source object with the properties of another object (shallow copy).
-	# We use this to simulate Node's deprecated `process.mixin`
-	extend: ((object, properties) ->
-		(object[key]: val) for key, val of properties),
+  # Extend a source object with the properties of another object (shallow copy).
+  # We use this to simulate Node's deprecated `process.mixin`
+  extend: ((object, properties) ->
+    (object[key]: val) for key, val of properties),
 }
-CoffeeScript: require("../lib/coffee-script")
 
 term: {
-	red: '\033[0;31m',
-	green: '\033[0;32m',
-	normal: '\033[0m',
+  red: '\033[0;31m',
+  green: '\033[0;32m',
+  normal: '\033[0m',
 }
 
 test_exports: {}
 
-#TODO: some env vars for this?
-LIKELY_COFFEESCRIPT_PATHS: []
-LIKELY_LIB_PATHS: ['../lib','lib']
+# path tomfoolery - where am I? Where is Coffee-Script?
+_CoffeeScript: null
+CoffeeScript: ->
+  return _CoffeeScript if _CoffeeScript?
+  env = process.env
+  require.paths.unshift(env.COFFEESCRIPT_LIB) if 'COFFEESCRIPT_LIB' in env
+  _CoffeeScript: require("coffee-script")
+  return _CoffeeScript
 
+# globals to keep track of tests / successes / errors
 tests: []
 errors: []
 succeeded: 0
@@ -95,7 +100,7 @@ exports.run_standalone: run_standalone: (verbose) ->
 exports.run_file: run_file: (file, verbose) ->
   print_file file if verbose
   code: fs.readFileSync file
-  CoffeeScript.run code, {source: file}
+  CoffeeScript().run code, {source: file}
   run_tests(verbose)
 
 print_file: (file) ->
@@ -105,9 +110,10 @@ exports.compile_and_run_file: compile_and_run_file: (dir, file, temp_path, verbo
   output_file: file.replace /\.coffee$/, '.js'
   file_path: "$dir/$file"
   output_path: "$temp_path/$output_file"
-  prelude: "require('cofee-spec').autorun(global, ${verbose});"
+  require_path: __filename.replace(/\.js/i, '')
+  prelude: "require('${require_path}').autorun(global, ${verbose});"
   input_code: prelude + fs.readFileSync("$dir/$file")
-  compiled: CoffeeScript.compile input_code, {source:file_path}
+  compiled: CoffeeScript().compile input_code, {source:file_path}
   fs.writeFileSync(output_path, compiled)
   exec "node '$output_path'", (err, stdout, stderr) ->
     print_file(file_path) if verbose
