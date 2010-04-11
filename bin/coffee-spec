@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var fs = require('fs');
+var lib = path.join(path.dirname(fs.realpathSync(__filename)), '../lib');
+
+#TODO: use optparse when it's available from outside coffee-script
+var test_dir = process.argv[2];
+if (!test_dir) {
+	throw new Error("usage: " + process.argv[1] + " test_dir");
+}
+require('sys').puts(test_dir);
+require(lib + '/coffee-spec').run(test_dir);
+
