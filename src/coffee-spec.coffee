@@ -4,6 +4,7 @@ sys: require "sys"
 debug: sys.debug
 puts: sys.puts
 assert: require "assert"
+child_process: require('child_process')
 
 helpers: {
   # (blatantly stolen from coffeescript-proper)
@@ -40,12 +41,20 @@ CoffeeScript: ->
   return _CoffeeScript
 
 # globals to keep track of tests / successes / errors
-tests: []
-errors: []
-succeeded: 0
-failed: 0
-unit: "tests"
-start_time: new Date()
+tests: undefined
+errors: undefined
+succeeded: undefined
+failed: undefined
+unit: undefined
+start_time: undefined
+
+init: ->
+  tests: []
+  errors: []
+  succeeded: 0
+  failed: 0
+  unit: "tests"
+  start_time: new Date()
 
 add_error: (err) ->
   errors.push(err)
@@ -53,7 +62,7 @@ add_error: (err) ->
 
 # remove all node.js and lib/spec.js lines from stack trace
 cleanup_stack: (stack) ->
-  stack: stack.replace /\n^.*lib\/spec\.js:\d+:\d+\)$/gm, ''
+  stack: stack.replace /\n^.*coffee-spec\.js:\d+:\d+\)$/gm, ''
   stack: stack.replace /\n^\s+at node\.js:\d+:\d+$/gm, ''
   stack
 
@@ -92,6 +101,7 @@ exports.run_tests: run_tests: (verbose) ->
 # Run all defined tests, report and
 # exit with the number of failed tests
 run_standalone: (verbose) ->
+  init()
   run_tests(verbose)
   report(verbose)
   process.exit(failed)
@@ -115,7 +125,7 @@ compile_and_run_file: (dir, file, temp_path, verbose, cb) ->
   input_code: prelude + fs.readFileSync("$dir/$file")
   compiled: CoffeeScript().compile input_code, {source:file_path}
   fs.writeFileSync(output_path, compiled)
-  exec "node '$output_path'", (err, stdout, stderr) ->
+  child_process.spawn 'node', [output_path], (err, stdout, stderr) ->
     print_file(file_path) if verbose
     if err
       failed += 1
@@ -131,11 +141,15 @@ exports.run: (dir, options, cb) ->
   filter: options.filter
   verbose: options.verbose
   temp_dir: options.temp_dir
+  init()
   do_end: ->
     report(verbose)
     summarize()
     if cb?
-      cb(failed)
+      puts "FAILED: ${failed}"
+      puts "SUCCEEDED: ${succeeded}"
+      puts "cb: ${cb}"
+      cb(failed, succeeded)
     else
       process.exit(failed)
 
@@ -159,7 +173,7 @@ exports.run: (dir, options, cb) ->
     iterate()
 
   if options.compile
-    mkdir: process.createChildProcess 'mkdir', ['-p', temp_dir]
+    mkdir: child_process.spawn 'mkdir', ['-p', temp_dir]
     mkdir.addListener 'exit', do_run
   else
     helpers.extend global, global_scope

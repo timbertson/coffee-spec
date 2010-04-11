@@ -10,13 +10,14 @@ link: compile node_libraries
 	rm -f ~/.node_libraries/coffee-spec.js
 	ln -s `pwd`/lib/coffee-spec.js ~/.node_libraries/
 
-test:
+test: compile
 	# the base specs ensure that the command actually *works*
 	# on a very basic level on some known test fixtures
 	coffee test/base/command-line.coffee
 	coffee test/base/in-process.coffee
 	# specs are run using coffee-spec itself
-	coffee bin/coffee-spec test/spec
+	echo "------------------"
+	bin/coffee-spec test/spec
 
 node_libraries:
 	mkdir -p ~/.node_libraries
