@@ -58,7 +58,7 @@ cleanup_stack: (stack) ->
   stack
 
 # Output a detailed report on all failing tests
-exports.report: report: (verbose) ->
+report: (verbose) ->
   puts "\n-------------------------" if failed and verbose
   for error in errors
     [description, stack]: error
@@ -67,7 +67,7 @@ exports.report: report: (verbose) ->
   return failed
 
 # Summarize entire test run
-exports.summarize: summarize: ->
+summarize: ->
   time_elapsed: ((new Date() - start_time) / 1000).toFixed(2)
   message: "passed ${succeeded} ${unit} in $time_elapsed seconds${term.normal}"
   puts ""
@@ -91,13 +91,13 @@ exports.run_tests: run_tests: (verbose) ->
 
 # Run all defined tests, report and
 # exit with the number of failed tests
-exports.run_standalone: run_standalone: (verbose) ->
+run_standalone: (verbose) ->
   run_tests(verbose)
   report(verbose)
   process.exit(failed)
 
 # Add tests from a file and immediately run them
-exports.run_file: run_file: (file, verbose) ->
+run_file: (file, verbose) ->
   print_file file if verbose
   code: fs.readFileSync file
   CoffeeScript().run code, {source: file}
@@ -106,7 +106,7 @@ exports.run_file: run_file: (file, verbose) ->
 print_file: (file) ->
   puts "\n" + file + ":"
 
-exports.compile_and_run_file: compile_and_run_file: (dir, file, temp_path, verbose, cb) ->
+compile_and_run_file: (dir, file, temp_path, verbose, cb) ->
   output_file: file.replace /\.coffee$/, '.js'
   file_path: "$dir/$file"
   output_path: "$temp_path/$output_file"
@@ -126,17 +126,24 @@ exports.compile_and_run_file: compile_and_run_file: (dir, file, temp_path, verbo
     cb()
 
 # Run all tests in a given directory
-exports.run: (dir, options) ->
+exports.run: (dir, options, cb) ->
+  options ||= {}
   filter: options.filter
   verbose: options.verbose
   temp_dir: options.temp_dir
   do_end: ->
     report(verbose)
     summarize()
-    process.exit(failed)
+    if cb?
+      cb(failed)
+    else
+      process.exit(failed)
 
   do_run: ->
-    files: fs.readdirSync dir
+    try
+      files: fs.readdirSync dir
+    catch e
+      throw new Error("Error processing ${dir}: ${e}")
     iterate: ->
       if files.length == 0
         return do_end()
