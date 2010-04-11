@@ -21,7 +21,7 @@ To install a symlink to the library in `~/.node_libraries`:
 
 or if you want to copy the javascript file instead of linking it:
 
-	make install
+	make copy
 
 If you change the source (in `src/`), you should run:
 
@@ -33,16 +33,20 @@ to regenerate any necessary javascript (under `lib`).
 ## Using it in your own project:
 
 	spec: require 'coffee-spec'
-	spec.run test_dir, opts
+	spec.run test_dir, opts, cb
 
-the `run` call will return instantly, but you should not try to do anything after that - it will run asynchronously, and will call `process.exit` with the appropriate return code when all tests are complete.
-
-Where `opts` is a dictionary containing any of the following:
+Where `cb` is optional, and `opts` is a dictionary containing any of the following:
 
  - **compile**: compile tests to intermediate files. If `true`, `temp_dir` bust also be given.
  - **temp\_dir**: directory to place temporary (compiled) tests. This will be created if it does not
-	 already exist, but will *not* be deleted afterwards
+   already exist, but will *not* be deleted afterwards
  - **verbose**: if `true`, test names will be output as they are run
+
+If `cb` is given, it will be called after all tests have been run, with the number of passed and failed tests. e.g:
+
+	spec.run test_dir, opts, (passed, failed) ->
+		if failed > 0
+			throw new Error("failed " + failed + "tests")
 
 ## Considerations:
 
@@ -57,6 +61,5 @@ Alternately, you can add this path to require.paths before running `coffee-spec`
 - load directories recursively
 - setup/teardown for `describe` blocks
 - make it fall-back to using only the `coffee` binary if libs are not available
-- a `bin/coffee-spec` command for use on projects that aren't coffee-script itself
 - add a callback paramater to `run`, to make coffee-spec return the results instead of exiting the process
 
