@@ -116,7 +116,9 @@ run_file: (file, verbose) ->
 print_file: (file) ->
   puts "\n" + file + ":"
 
-compile_and_run_file: (dir, file, temp_path, verbose, cb) ->
+compile_and_run_file: (file, temp_path, verbose, cb) ->
+  dir = path.dirname(file)
+  file = path.basename(file)
   output_file: file.replace /\.coffee$/, '.js'
   file_path: "$dir/$file"
   output_path: "$temp_path/$output_file"
@@ -135,29 +137,43 @@ compile_and_run_file: (dir, file, temp_path, verbose, cb) ->
     puts stderr if stderr
     cb()
 
+readdirRecursive: (base) ->
+  realpath ||= base
+  files: []
+  for file in fs.readdirSync(base)
+    absfile: fs.realpathSync(path.join(base, file))
+    if fs.statSync(absfile).isDirectory()
+      files: files.concat(readdirRecursive(absfile))
+    else
+      files.push(absfile)
+  return files
+
+relativePaths: (base, paths) ->
+  return p.replace(base + '/', '') for p in paths
+
 # Run all tests in a given directory
 exports.run: (dir, options, cb) ->
   options ||= {}
   filter: options.filter
   verbose: options.verbose
   temp_dir: options.temp_dir
+  silent: options.silent
   init()
   do_end: ->
-    report(verbose)
-    summarize()
+    if not silent?
+      report(verbose)
+      summarize()
     if cb?
-      puts "FAILED: ${failed}"
-      puts "SUCCEEDED: ${succeeded}"
-      puts "cb: ${cb}"
       cb(failed, succeeded)
     else
       process.exit(failed)
 
   do_run: ->
     try
-      files: fs.readdirSync dir
+      files: readdirRecursive dir
     catch e
       throw new Error("Error processing ${dir}: ${e}")
+    files: relativePaths(process.cwd(), files)
     iterate: ->
       if files.length == 0
         return do_end()
@@ -166,9 +182,9 @@ exports.run: (dir, options, cb) ->
       return iterate() if filter and file.search(filter) == -1
       if options.compile
         unit: "test files"
-        compile_and_run_file dir, file, temp_dir, options.verbose, iterate
+        compile_and_run_file file, temp_dir, options.verbose, iterate
       else
-        run_file("$dir/$file", options.verbose)
+        run_file(file, options.verbose)
         iterate()
     iterate()
 

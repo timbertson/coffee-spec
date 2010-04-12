@@ -32,9 +32,9 @@ test_dir 'test/fixtures/fail', (fail, out, err) ->
 	equal err, ''
 	ok fail?
 
-# test_dir 'test/fixtures/nested', (fail, out, err, summary) ->
-# 	equal(strip_control_chars(summary.split(' in ')[0]), 'FAILED 1 and passed 2 tests')
-# 	equal(err, '')
-# 	ok fail?
+test_dir 'test/fixtures/nested', (fail, out, err, summary) ->
+	equal(strip_control_chars(summary.split(' in ')[0]), 'FAILED 1 and passed 2 tests')
+	equal(err, '')
+	ok fail?
 
 
