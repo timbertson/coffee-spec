@@ -1,4 +1,4 @@
-# An almost-trivial spec runner for coffeescript.
+# A simple spec runner for coffeescript.
 
 You will need coffeescript: [http://coffeescript.org](http://coffeescript.org)
 
@@ -12,6 +12,30 @@ You will need coffeescript: [http://coffeescript.org](http://coffeescript.org)
 			ok socks.are_rocked
 
 `describe` blocks can be nested, and are not required. The `assert` node library is automatically imported into the global scope for you.
+
+#### Writing _asynchronous_ tests:
+
+Since node is pervasively (and, in some cases, painfully) asynchronous, you'll need a hand testing out all that asynchronous code. It's reasonably painless though, I promise.
+
+If you want to have an asynchronous test, the body of your test should take a single argument, `pass`. Inside every asynchronous callback, you must call `pass()` with an optional description of what was checked (this is useful for debugging).
+
+So that coffee-spec knows when your test is complete, you *must* also tell it how many calls to `pass` it should expect your test to make. This is done by passing the number of expected calls to the `expect` function somewhere in the function body of your test (typically the first or last line).
+
+For example:
+
+	it 'should iterate through a list asynchronously', (pass) ->
+		[1, 2].asyncMap(((elem) -> elem + 1), (results) ->
+			ok results[0] is 1
+			ok results[2] is 2
+			pass()
+
+		[1].asyncMap(((elem) -> elem), (results) ->
+			ok results.length is 1
+			pass('length check')
+
+		expect 2
+
+If either of the callbacks goes astray and never gets called, coffee-spec will wait for a full second and then fail your test. If you provide unique descriptions to each `pass` call, it'll print out the ones that it *did* receive, which will help you figure out which ones went astray.
 
 ## Building / Installing:
 
@@ -57,9 +81,6 @@ Alternately, you can add this path to require.paths before running `coffee-spec`
 
 ## TODO:
 
-- tests! (ironically)
-- load directories recursively
 - setup/teardown for `describe` blocks
 - make it fall-back to using only the `coffee` binary if libs are not available
-- add a callback paramater to `run`, to make coffee-spec return the results instead of exiting the process
 

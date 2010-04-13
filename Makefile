@@ -13,8 +13,6 @@ link: compile node_libraries
 test: compile
 	coffee test/base/command-line.coffee
 	coffee test/base/in-process.coffee
-	echo "------------------"
-	bin/coffee-spec test/spec
 
 node_libraries:
 	mkdir -p ~/.node_libraries

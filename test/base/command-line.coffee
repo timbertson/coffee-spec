@@ -1,3 +1,9 @@
+# base-level testing of the command-line runner.
+# This just makes sure that the runner will accept some well-known
+# fixtures, and give the expected results. Since this test is run
+# as pure coffeescript, it should be fairly resistant to bugs
+# in the runner causing it to falsely pass.
+
 assert: require 'assert'
 global.ok = assert.ok
 global.equal = assert.equal
@@ -13,6 +19,7 @@ test_dir: (path, cb) ->
 		summary = outlines[outlines.length-2]
 		try
 			cb(fail, out, err, summary)
+			puts "command-line checks passed: ${path}"
 		catch e
 			puts "OUT: ${out}"
 			puts "ERR: ${err}"
