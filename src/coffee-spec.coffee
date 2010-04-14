@@ -199,6 +199,11 @@ class TestCase
       @name
 
   poll_for_passes: (cb) ->
+    @error_catcher: (err) =>
+      @error: err
+      @success: false
+    process.addListener 'uncaughtException', @error_catcher
+
     tries: 0
     iterate: =>
       passes: @async_passes.length
@@ -221,14 +226,18 @@ class TestCase
     @async_passes.push(desc)
 
   finished_async_testing: (continuation, success) ->
+    process.removeListener('uncaughtException', @error_catcher)
+    if @error? # this can happen from exceptions inside callbacks
+      return continuation()
     @success: success
-    return continuation() if success
+    return continuation() if @success
 
     verbose "${term.red}failed (async)${term.normal}"
     @error: "Expected ${@expected_passes} async pass() events, but got ${@async_passes.length}."
     if @async_passes.length and (msg for msg in @async_passes when msg?).length > 0
       @error += " Passes received were:"
       @error += "\n - ${desc}" for desc in @async_passes
+    @async_passes: undefined
     continuation()
 
   run: (cb) ->
