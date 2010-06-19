@@ -85,7 +85,7 @@ run_standalone: () ->
 # Add tests from a file and immediately run them
 load_file: (file) ->
   print_file file
-  code: fs.readFileSync file
+  code: fs.readFileSync file, "utf-8"
   CoffeeScript().run code, {source: file}
 
 print_file: (file) ->
@@ -245,7 +245,7 @@ class TestCase
     active_test: this
     verbose " - " + this + " ... "
     try
-      @body(@async_pass <- this)
+      @body((desc) => @async_pass(desc))
       if @expected_passes > 0
         @poll_for_passes(cb)
       else
@@ -279,7 +279,7 @@ class TestFile
     output_path: "$temp_path/$output_file"
     require_path = fs.realpathSync(__filename).replace(/\.js/i, '')
     prelude: "require('${require_path}').autorun(global, ${VERBOSITY});"
-    input_code: prelude + fs.readFileSync(@file_path)
+    input_code: prelude + fs.readFileSync(@file_path, "utf8")
     compiled: CoffeeScript().compile input_code, {source:@file_path}
     fs.writeFileSync(output_path, compiled)
     @output_path: output_path

@@ -17,4 +17,6 @@ test: compile
 node_libraries:
 	mkdir -p ~/.node_libraries
 
+clean:
+	rm lib/*
 .PHONY: compile link copy node_libraries test
