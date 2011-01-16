@@ -40,8 +40,8 @@ init: (_global, log_level) ->
 
 # remove all node.js and lib/spec.js lines from stack trace
 cleanup_stack: (stack) ->
-  stack: stack.replace /\n^.*coffee-spec\.js:\d+:\d+\)$/gm, ''
-  stack: stack.replace /\n^\s+at node\.js:\d+:\d+$/gm, ''
+  # stack: stack.replace /\n^.*coffee-spec\.js:\d+:\d+\)$/gm, ''
+  # stack: stack.replace /\n^\s+at node\.js:\d+:\d+$/gm, ''
   stack
 
 num_failed_and_passed: ->
@@ -71,7 +71,9 @@ exports.run_tests: run_tests: (cb) ->
       cb()
       return
     test: remaining.shift()
-    test.run(iterate)
+    test.run ->
+      test.status()
+      iterate()
   iterate()
 
 # Run all defined tests, report and
@@ -89,7 +91,7 @@ load_file: (file) ->
   CoffeeScript().run code, {source: file}
 
 print_file: (file) ->
-  verbose "\n" + file + ":"
+  verbose "\n" + file + ":\n"
 
 compile_file: (file, temp_path) ->
   dir = path.dirname(file)
@@ -232,7 +234,6 @@ class TestCase
     @success: success
     return continuation() if @success
 
-    verbose "${term.red}failed (async)${term.normal}"
     @error: "Expected ${@expected_passes} async pass() events, but got ${@async_passes.length}."
     if @async_passes.length and (msg for msg in @async_passes when msg?).length > 0
       @error += " Passes received were:"
@@ -250,20 +251,24 @@ class TestCase
         @poll_for_passes(cb)
       else
         @success: true
-        verbose "${term.green}ok${term.normal}"
         cb()
     catch e
       @success: false
       @error: cleanup_stack e.stack
-      verbose "${term.red}failed${term.normal}"
       cb()
     finally
       active_test: null
 
+  status: ->
+    if @success
+      verbose "${term.green}ok${term.normal}\n"
+    else
+      verbose "${term.red}failed${term.normal}\n"
+
   report: ->
     return if @success
-    info "${term.red}FAILED: ${this}${term.normal}\n"
-    info @error + "\n"
+    info "${term.red}FAILED: ${this}${term.normal}"
+    info @error + "n"
 
 
 # a test-like object that represents a file to be compiled and run
@@ -306,7 +311,7 @@ info: (a...) ->
 
 verbose: (a...) ->
   if VERBOSITY >= verbosity.verbose
-    sys.puts(a...)
+    sys.print(a...)
 
 verbosity: {
   silent: 0,
