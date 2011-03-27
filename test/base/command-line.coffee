@@ -4,25 +4,25 @@
 # as pure coffeescript, it should be fairly resistant to bugs
 # in the runner causing it to falsely pass.
 
-assert: require 'assert'
+assert = require 'assert'
 global.ok = assert.ok
 global.equal = assert.equal
-exec: require('child_process').exec
-puts: require('sys').puts
+exec = require('child_process').exec
+puts = require('sys').puts
 
-strip_control_chars: (text) ->
+strip_control_chars = (text) ->
 	text.split(/\[0;3\dm/)[1]
 
-test_dir: (path, cb) ->
-	exec("bin/coffee-spec ${path}", (fail, out, err) ->
+test_dir = (path, cb) ->
+	exec("bin/coffee-spec #{path}", (fail, out, err) ->
 		outlines = out.split("\n")
 		summary = outlines[outlines.length-2]
 		try
 			cb(fail, out, err, summary)
-			puts "command-line checks passed: ${path}"
+			puts "command-line checks passed: #{path}"
 		catch e
-			puts "OUT: ${out}"
-			puts "ERR: ${err}"
+			puts "OUT: {{#{out}}}"
+			puts "ERR: {{#{err}}}"
 			throw e
 	)
 

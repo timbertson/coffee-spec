@@ -11,4 +11,7 @@ if (!test_dir) {
 }
 require('sys').puts(test_dir);
 require(lib + '/coffee-spec').run(test_dir);
+// require(lib + '/coffee-spec').run(test_dir, {verbose:true, compile:true});
+// require(lib + '/coffee-spec').run(test_dir, {verbose:true});
+// require(lib + '/coffee-spec').run(test_dir, {compile:true});
 

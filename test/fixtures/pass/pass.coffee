@@ -1,3 +1,4 @@
+require('assert')
 describe 'success', ->
 	it 'should be the case', ->
 		ok 1 is 1

@@ -1,6 +1,6 @@
-# A simple spec runner for coffeescript.
+# A simple spec runner for CoffeeScript.
 
-You will need coffeescript: [http://coffeescript.org](http://coffeescript.org)
+You will need CoffeeScript: [http://coffeescript.org](http://coffeescript.org)
 
 ## Writing tests:
 
@@ -37,7 +37,7 @@ For example:
 
 If either of the callbacks goes astray and never gets called, coffee-spec will wait for a full second and then fail your test. If you provide unique descriptions to each `pass` call, it'll print out the ones that it *did* receive, which will help you figure out which ones went astray.
 
-## Building / Installing:
+## Building / Installing Locally:
 
 To install a symlink to the library in `~/.node_libraries`:
 
@@ -74,10 +74,7 @@ If `cb` is given, it will be called after all tests have been run, with the numb
 
 ## Considerations:
 
-`coffee-spec` requires access to the coffee-script source libraries (`coffee-script.js` and friends).
-
-If these files are not on the `require.path` already, you can set the environment variable `COFFEESCRIPT_LIB` to the location of the coffee-script `lib` directory.
-Alternately, you can add this path to require.paths before running `coffee-spec`.
+`coffee-spec` requires access to the coffee-script source libraries (`coffee-script.js` and friends). If you use the zero install feed at http://gfxmonk.net/dist/0install/coffee-script.xml, coffee-script will be placed on `$NODE_PATH` appropriately
 
 ## TODO:
 
