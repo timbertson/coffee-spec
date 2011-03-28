@@ -9,7 +9,6 @@ var test_dir = process.argv[2];
 if (!test_dir) {
 	throw new Error("usage: " + process.argv[1] + " test_dir");
 }
-require('sys').puts(test_dir);
 require(lib + '/coffee-spec').run(test_dir);
 // require(lib + '/coffee-spec').run(test_dir, {verbose:true, compile:true});
 // require(lib + '/coffee-spec').run(test_dir, {verbose:true});

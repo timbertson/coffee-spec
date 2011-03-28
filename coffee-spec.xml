@@ -188,9 +188,9 @@ spec.run test_dir, opts, cb
 		<command name="run" path="bin/coffee-spec">
 			<runner interface="http://gfxmonk.net/dist/0install/node.js.xml"/>
 		</command>
-		<implementation id="sha1new=1874890f2d520e8869d2e9dcc1d301c71fa8089d" released="2011-03-27" version="0.2">
-			<manifest-digest sha256="aff1a3ce639bce03c17093f63eafe4054f7ed1b299b38b84a35eae540e9b43ed"/>
-			<archive href="http://gfxmonk.net/dist/0install/coffee-spec/coffee-spec-0.2.tgz" size="3980"/>
+		<implementation id="sha1new=fface20d00db2098f209fe81c959a751a23d67d0" released="2011-03-28" version="0.2">
+			<manifest-digest sha256="9346269ab1d8b3437395bd279d5402c75993c718b2fce311dcc244a94ed06beb"/>
+			<archive href="http://gfxmonk.net/dist/0install/coffee-spec/coffee-spec-0.2.tgz" size="3967"/>
 		</implementation>
 	</group>
 </interface>

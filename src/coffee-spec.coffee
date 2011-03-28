@@ -4,7 +4,7 @@ sys = require "sys"
 debug = sys.debug
 assert = require("assert")
 child_process = require('child_process')
-CoffeeScript = require("coffee-script").CoffeeScript
+CoffeeScript = require("coffee-script")
 
 MAX_ASYNC_TRIES = 5    # how many times to check if a callback has completed (before giving up)
 ASYNC_SLEEP_TIME = 0.2 # seconds between checks
