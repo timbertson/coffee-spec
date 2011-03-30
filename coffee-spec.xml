@@ -192,5 +192,9 @@ spec.run test_dir, opts, cb
 			<manifest-digest sha256="9346269ab1d8b3437395bd279d5402c75993c718b2fce311dcc244a94ed06beb"/>
 			<archive href="http://gfxmonk.net/dist/0install/coffee-spec/coffee-spec-0.2.tgz" size="3967"/>
 		</implementation>
+		<implementation id="sha1new=2c7dcd745119d91aa8e4f0c0949bbbaf3f4e1bec" released="2011-03-30" version="0.3">
+			<manifest-digest sha256="32edf69b2aa11cca8fc2ed56738c1ec2c93b98a018b36fc07b804842888d0058"/>
+			<archive href="http://gfxmonk.net/dist/0install/coffee-spec/coffee-spec-0.3.tgz" size="4172"/>
+		</implementation>
 	</group>
 </interface>
