@@ -114,7 +114,7 @@ get_log_level = (opts) ->
 exports.run = (dir, options, cb) ->
   options or= {}
   filter = options.filter
-  temp_dir = options.temp_dir or '/tmp'
+  temp_dir = options.temp_dir or '_coffee_specs'
   init(global, get_log_level(options))
   do_end = ->
     [failed, passed] = num_failed_and_passed()

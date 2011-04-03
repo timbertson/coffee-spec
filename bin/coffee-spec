@@ -11,7 +11,8 @@ var usage = "usage: " + process.argv[1] + " test_dir";
 var parser = new OptionParser(
 	[
 		['-v', '--verbose', 'Print test summaries'],
-		['-c', '--compile', 'Compile to intermediate files (can aid debugging)']
+		['-c', '--compile', 'Compile to intermediate files (can aid debugging)'],
+		['-d', '--dest [DEST]', 'compile intermediate files to DEST (defaults to _coffee_specs)']
 	], usage)
 
 // Argv: [0] = node, [1] = this script
@@ -25,7 +26,8 @@ if(args.length != 1) {
 var test_dir = args[0];
 var opts = {
 	verbose: parsed.verbose || false,
-	compile: parsed.compile || false
+	compile: parsed.compile || false,
+	temp_dir: parsed.dest
 }
 // sys.puts(util.inspect(parsed))
 // sys.puts(util.inspect(opts))
