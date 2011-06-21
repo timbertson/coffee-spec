@@ -90,28 +90,25 @@ If `cb` is given, it will be called after all tests have been run, with the numb
 	</description>
 	<rich-description xmlns="http://gfxmonk.net/dist/0install">
 		<div xmlns="http://www.w3.org/1999/xhtml">
-			<div id="a-simple-spec-runner-for-coffeescript.">
-				<h1>A simple spec runner for CoffeeScript.</h1>
-				<p>You will need CoffeeScript: <a href="http://coffeescript.org">http://coffeescript.org</a></p>
-				<div id="writing-tests:">
-					<h2>Writing tests:</h2>
-					<p>..is probably why you're here. It's very reminiscent of rspec. Here's a quick illustrative example:</p>
-					<pre>
-						<code>describe 'my lovely feature', -&gt;
+			<h1 id="a-simple-spec-runner-for-coffeescript.">A simple spec runner for CoffeeScript.</h1>
+			<p>You will need CoffeeScript: <a href="http://coffeescript.org">http://coffeescript.org</a></p>
+			<h2 id="writing-tests">Writing tests:</h2>
+			<p>..is probably why you're here. It's very reminiscent of rspec. Here's a quick illustrative example:</p>
+			<pre>
+				<code>describe 'my lovely feature', -&gt;
     it 'should rock your socks', -&gt;
         socks = get_socks("yours")
         ok socks.are_rocked
 </code>
-					</pre>
-					<p><code>describe</code> blocks can be nested, and are not required. The <code>assert</code> node library is automatically imported into the global scope for you.</p>
-					<div id="writing-asynchronous-tests:">
-						<h4>Writing <em>asynchronous</em> tests:</h4>
-						<p>Since node is pervasively (and, in some cases, painfully) asynchronous, you'll need a hand testing out all that asynchronous code. It's reasonably painless though, I promise.</p>
-						<p>If you want to have an asynchronous test, the body of your test should take a single argument, <code>pass</code>. Inside every asynchronous callback, you must call <code>pass()</code> with an optional description of what was checked (this is useful for debugging).</p>
-						<p>So that coffee-spec knows when your test is complete, you <em>must</em> also tell it how many calls to <code>pass</code> it should expect your test to make. This is done by passing the number of expected calls to the <code>expect</code> function somewhere in the function body of your test (typically the first or last line).</p>
-						<p>For example:</p>
-						<pre>
-							<code>it 'should iterate through a list asynchronously', (pass) -&gt;
+			</pre>
+			<p><code>describe</code> blocks can be nested, and are not required. The <code>assert</code> node library is automatically imported into the global scope for you.</p>
+			<h4 id="writing-asynchronous-tests">Writing <em>asynchronous</em> tests:</h4>
+			<p>Since node is pervasively (and, in some cases, painfully) asynchronous, you'll need a hand testing out all that asynchronous code. It's reasonably painless though, I promise.</p>
+			<p>If you want to have an asynchronous test, the body of your test should take a single argument, <code>pass</code>. Inside every asynchronous callback, you must call <code>pass()</code> with an optional description of what was checked (this is useful for debugging).</p>
+			<p>So that coffee-spec knows when your test is complete, you <em>must</em> also tell it how many calls to <code>pass</code> it should expect your test to make. This is done by passing the number of expected calls to the <code>expect</code> function somewhere in the function body of your test (typically the first or last line).</p>
+			<p>For example:</p>
+			<pre>
+				<code>it 'should iterate through a list asynchronously', (pass) -&gt;
     [1, 2].asyncMap(((elem) -&gt; elem + 1), (results) -&gt;
         ok results[0] is 1
         ok results[2] is 2
@@ -123,62 +120,51 @@ If `cb` is given, it will be called after all tests have been run, with the numb
 
     expect 2
 </code>
-						</pre>
-						<p>If either of the callbacks goes astray and never gets called, coffee-spec will wait for a full second and then fail your test. If you provide unique descriptions to each <code>pass</code> call, it'll print out the ones that it <em>did</em> receive, which will help you figure out which ones went astray.</p>
-					</div>
-				</div>
-				<div id="building-installing-locally:">
-					<h2>Building / Installing Locally:</h2>
-					<p>To install a symlink to the library in <code>~/.node_libraries</code>:</p>
-					<pre>
-						<code>make link
+			</pre>
+			<p>If either of the callbacks goes astray and never gets called, coffee-spec will wait for a full second and then fail your test. If you provide unique descriptions to each <code>pass</code> call, it'll print out the ones that it <em>did</em> receive, which will help you figure out which ones went astray.</p>
+			<h2 id="building-installing-locally">Building / Installing Locally:</h2>
+			<p>To install a symlink to the library in <code>~/.node_libraries</code>:</p>
+			<pre>
+				<code>make link
 </code>
-					</pre>
-					<p>or if you want to copy the javascript file instead of linking it:</p>
-					<pre>
-						<code>make copy
+			</pre>
+			<p>or if you want to copy the javascript file instead of linking it:</p>
+			<pre>
+				<code>make copy
 </code>
-					</pre>
-					<p>If you change the source (in <code>src/</code>), you should run:</p>
-					<pre>
-						<code>make
+			</pre>
+			<p>If you change the source (in <code>src/</code>), you should run:</p>
+			<pre>
+				<code>make
 </code>
-					</pre>
-					<p>to regenerate any necessary javascript (under <code>lib</code>).</p>
-				</div>
-				<div id="using-it-in-your-own-project:">
-					<h2>Using it in your own project:</h2>
-					<pre>
-						<code>spec: require 'coffee-spec'
+			</pre>
+			<p>to regenerate any necessary javascript (under <code>lib</code>).</p>
+			<h2 id="using-it-in-your-own-project">Using it in your own project:</h2>
+			<pre>
+				<code>spec: require 'coffee-spec'
 spec.run test_dir, opts, cb
 </code>
-					</pre>
-					<p>Where <code>cb</code> is optional, and <code>opts</code> is a dictionary containing any of the following:</p>
-					<ul>
-						<li><strong>compile</strong>: compile tests to intermediate files. If <code>true</code>, <code>temp_dir</code> bust also be given.</li>
-						<li><strong>temp_dir</strong>: directory to place temporary (compiled) tests. This will be created if it does not already exist, but will <em>not</em> be deleted afterwards</li>
-						<li><strong>verbose</strong>: if <code>true</code>, test names will be output as they are run</li>
-					</ul>
-					<p>If <code>cb</code> is given, it will be called after all tests have been run, with the number of passed and failed tests. e.g:</p>
-					<pre>
-						<code>spec.run test_dir, opts, (passed, failed) -&gt;
+			</pre>
+			<p>Where <code>cb</code> is optional, and <code>opts</code> is a dictionary containing any of the following:</p>
+			<ul>
+				<li><strong>compile</strong>: compile tests to intermediate files. If <code>true</code>, <code>temp_dir</code> bust also be given.</li>
+				<li><strong>temp_dir</strong>: directory to place temporary (compiled) tests. This will be created if it does not already exist, but will <em>not</em> be deleted afterwards</li>
+				<li><strong>verbose</strong>: if <code>true</code>, test names will be output as they are run</li>
+			</ul>
+			<p>If <code>cb</code> is given, it will be called after all tests have been run, with the number of passed and failed tests. e.g:</p>
+			<pre>
+				<code>spec.run test_dir, opts, (passed, failed) -&gt;
     if failed &gt; 0
         throw new Error("failed " + failed + "tests")
 </code>
-					</pre>
-				</div>
-				<div id="considerations:">
-					<h2>Considerations:</h2>
-					<p><code>coffee-spec</code> requires access to the coffee-script source libraries (<code>coffee-script.js</code> and friends). If you use the zero install feed at http://gfxmonk.net/dist/0install/coffee-script.xml, coffee-script will be placed on <code>$NODE_PATH</code> appropriately</p>
-				</div>
-				<div id="todo:">
-					<h2>TODO:</h2>
-					<ul>
-						<li>setup/teardown for <code>describe</code> blocks</li>
-						<li>make it fall-back to using only the <code>coffee</code> binary if libs are not available</li>
-					</ul>
-				</div>
-			</div>
+			</pre>
+			<h2 id="considerations">Considerations:</h2>
+			<p><code>coffee-spec</code> requires access to the coffee-script source libraries (<code>coffee-script.js</code> and friends). If you use the zero install feed at http://gfxmonk.net/dist/0install/coffee-script.xml, coffee-script will be placed on <code>$NODE_PATH</code> appropriately</p>
+			<h2 id="todo">TODO:</h2>
+			<ul>
+				<li>setup/teardown for <code>describe</code> blocks</li>
+				<li>make it fall-back to using only the <code>coffee</code> binary if libs are not available</li>
+			</ul>
 		</div>
 	</rich-description>
 	<group>
@@ -199,6 +185,10 @@ spec.run test_dir, opts, cb
 		<implementation id="sha1new=4e2d95114a1733ed13a6fa73da2b7c0bc176fbd8" released="2011-04-03" version="0.3.1">
 			<manifest-digest sha256="090693607223f2337de9ae1517f3932d46772504ec67f9a5fcf77ce53aeac5de"/>
 			<archive href="http://gfxmonk.net/dist/0install/coffee-spec/coffee-spec-0.3.1.tgz" size="4224"/>
+		</implementation>
+		<implementation id="sha1new=2ad6b27935a62d30a33028b13d38949c9acaa0b4" released="2011-06-21" version="0.3.2">
+			<manifest-digest sha256="a77bdf894149036d7216036f2ad0c84466da57ccaa742c4589f397a6e3febf1b"/>
+			<archive href="http://gfxmonk.net/dist/0install/coffee-spec/coffee-spec-0.3.2.tgz" size="4300"/>
 		</implementation>
 	</group>
 </interface>
