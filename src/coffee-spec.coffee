@@ -18,6 +18,18 @@ unit = undefined
 start_time = undefined
 VERBOSITY = undefined
 
+# Here be hacks to ensure that exit status gets sent, bt only after node has
+# sent all output to stdout, etc. If you call exit() at the end of your code,
+# output may or may not ever get sent.
+EXIT_STATUS = 0
+exit = (state) ->
+	EXIT_STATUS = state
+EXIT_SENT = false
+process.on 'exit', ->
+	unless EXIT_SENT
+		EXIT_SENT = true
+		process.exit(EXIT_STATUS)
+
 init = (_global, log_level) ->
   tests = []
   errors = []
@@ -73,7 +85,7 @@ run_standalone = () ->
   run_tests ->
     [failed, succeeded] = num_failed_and_passed()
     report()
-    process.exit(failed)
+    exit(failed)
 
 # Add tests from a file and immediately run them
 load_file = (file) ->
@@ -123,7 +135,7 @@ exports.run = (dir, options, cb) ->
     if cb?
       cb(failed, passed)
     else
-      process.exit(failed)
+      exit(failed)
 
   do_run = ->
     try
