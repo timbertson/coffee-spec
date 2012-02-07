@@ -6,7 +6,7 @@ var lib = path.join(path.dirname(fs.realpathSync(__filename)), '../lib');
 var sys = require('sys');
 var util = require('util');
 
-var OptionParser = require('optparse').OptionParser
+var OptionParser = require('coffee-script/optparse').OptionParser
 var usage = "usage: " + process.argv[1] + " test_dir";
 var parser = new OptionParser(
 	[
