@@ -1,3 +1,5 @@
+<img src="http://gfxmonk.net/dist/status/project/coffee-spec.png">
+
 # A simple spec runner for CoffeeScript.
 
 You will need CoffeeScript: [http://coffeescript.org](http://coffeescript.org)
